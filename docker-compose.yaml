@@ -1,0 +1,31 @@
+version: '3'
+volumes:
+  db-data:
+
+services:
+  4sale-api:
+    build: .
+    restart: always
+    container_name: 4sale-api
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 8097:80
+    depends_on:
+      - 4sale-mysql
+
+  4sale-mysql:
+    image: mysql:8.0.29
+    restart: always
+    container_name: 4sale-mysql
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - 8098:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_HOST=4sale-mysql
+      - MYSQL_PORT=8098
+      - MYSQL_DATABASE=4sale
+      - MYSQL_USER=4sale-user
+      - MYSQL_PASSWORD=4sale-pass
