@@ -7,8 +7,8 @@ use App\DataProviders\DataProviderY;
 
 class DataProviderUtil
 {
-    const PROVIDER_X = 'provider_x';
-    const PROVIDER_Y = 'provider_y';
+    const PROVIDER_X = 'DataProviderX';
+    const PROVIDER_Y = 'DataProviderY';
 
     /**
      * @return string[]

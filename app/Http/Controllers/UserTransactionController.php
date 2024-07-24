@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\UserTransactionService;
 use App\Utils\DataProviderUtil;
 use App\Utils\HttpStatusCodeUtil;
+use App\Utils\UserTransactionStatusUtil;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,9 +19,29 @@ class UserTransactionController extends Controller
         $this->userTransactionService = $userTransactionService;
     }
 
-    public function index()
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'provider' => ['sometimes', 'string', 'in:' . implode(',', DataProviderUtil::getAllProviders())],
+            'statusCode' => ['sometimes', 'string', 'in:' . implode(',', UserTransactionStatusUtil::getAllStatuses())],
+            'balanceMin' => ['sometimes', 'integer'],
+            'balanceMax' => ['sometimes', 'integer'],
+            'currency' => ['sometimes', 'string'],
+        ]);
 
+        if ($validator->fails())
+            return $this->response($validator->errors()->toArray(), HttpStatusCodeUtil::BAD_REQUEST, 'Validation Error!');
+
+        $data = $this->userTransactionService->list($request->all());
+        $response = [
+            'count' => count($data),
+            'data' => $data
+        ];
+        return $this->response($response, HttpStatusCodeUtil::OK, 'Data Retrieved Successfully!');
     }
 
     /**

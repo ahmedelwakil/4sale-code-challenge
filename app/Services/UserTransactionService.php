@@ -13,6 +13,41 @@ class UserTransactionService
     const IMPORT_BATCH_SIZE = 50;
 
     /**
+     * @param array $filters
+     * @return array
+     */
+    public function list(array $filters)
+    {
+        $query = UserTransaction::query();
+
+        foreach ($filters as $key => $value) {
+            switch ($key) {
+                case 'provider':
+                    $query->where('source', '=', $filters['provider']);
+                    break;
+                case 'statusCode':
+                    $query->where('status', '=', $filters['statusCode']);
+                    break;
+                case 'balanceMin':
+                    $query->where('balance', '>=', $filters['balanceMin']);
+                    break;
+                case 'balanceMax':
+                    $query->where('balance', '<=', $filters['balanceMax']);
+                    break;
+                case 'currency':
+                    $query->where('currency', '=', $filters['currency']);
+            }
+        }
+
+        return $query
+            ->get()
+            ->map(function($record) {
+                return $record->clean();
+            })
+            ->toArray();
+    }
+
+    /**
      * @param UploadedFile $file
      * @param string $provider
      * @throws InvalidArgumentException

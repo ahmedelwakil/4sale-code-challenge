@@ -20,7 +20,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         /** User Transaction Routes */
         Route::group(['prefix' => 'transactions', 'as' => 'transactions.'], function () {
-            Route::get('', [UserTransactionController::class, 'transactions'])->name('index');
+            Route::get('', [UserTransactionController::class, 'index'])->name('index');
             Route::post('import', [UserTransactionController::class, 'import'])->name('import');
         });
     });
