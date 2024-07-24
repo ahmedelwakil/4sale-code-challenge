@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserTransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    /** User Routes */
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
+
+        /** User Transaction Routes */
+        Route::group(['prefix' => 'transactions', 'as' => 'transactions.'], function () {
+            Route::get('', [UserTransactionController::class, 'transactions'])->name('index');
+            Route::post('import', [UserTransactionController::class, 'import'])->name('import');
+        });
+    });
 });
