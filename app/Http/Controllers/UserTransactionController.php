@@ -64,7 +64,7 @@ class UserTransactionController extends Controller
         try {
             $this->userTransactionService->importFromUploadedFile($file, $provider);
         } catch (\Exception $e) {
-            return $this->response(['exception' => $e->getMessage()], HttpStatusCodeUtil::SERVER_ERROR, 'Server Error!');
+            return $this->response(['exception' => $e->getMessage()], HttpStatusCodeUtil::SERVER_ERROR, 'Error Importing Data!');
         }
 
         return $this->response([], HttpStatusCodeUtil::OK, 'Data Imported Successfully!');
