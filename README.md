@@ -1,66 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p>
+    <h1>4Sale Coding Challenge</h1>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About Project
+This project is a small demo for importing data from several data sources and filtering these data accordingly.
 
-## About Laravel
+## Project Deployment
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Steps on how to deploy (Make sure docker-compose is installed on your machine):
+- Clone project on your local machine
+- Open the command line and change the current directory to the project directory
+- Create <b>[.env](./.env)</b> file and copy it's content from the <b>[.env.deploy](./deploy-docker/.env.deploy)</b>
+- Run Command ```docker-compose up -d```
+- Enjoy! :star_struck:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<b>**Note</b> The deployment seeds the database automatically. Please refer to the <b>[run.sh](./deploy-docker/run.sh)</b> bash file. It contains the commands that the docker container executes after creating the container. 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The project will install 2 docker containers:
+- **MySQL Container**
+- **Laravel Application Container**
 
-## Learning Laravel
+To access any of the containers run ```docker exec -it {container-name} bash```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+To Run Unit Tests:
+- Access the Application Container ```docker exec -it 4sale-api bash```
+- Run the tests command ```./vendor/bin/phpunit```
+- The testing environment uses SQL Lite and runs on memory
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Usage
+There are 2 main endpoints that can be used throughout this project:
+1. **Data Import Endpoint**: 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    **[POST]** ```/app/users/transactions/import```
 
-## Laravel Sponsors
+    This endpoint takes 2 parameters in its body:
+    - **provider**: Specifying the DataProvider class that should be used to import the data. It should take a string value from the constants in the [DataProviderUtil](./app/Utils/DataProviderUtil.php). 
+    - **file**: The JSON file containing the data.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+2. **Transactions Index**: 
 
-### Premium Partners
+    **[GET]** ```/app/users/transactions```
+    
+    This endpoint can take multiple parameters:
+    - **provider**: Filtering the data according to the data provider. It should take a string value from the constants in the [DataProviderUtil](./app/Utils/DataProviderUtil.php).
+    - **statusCode**: Filtering the data according to the transaction status. It should take a string value from the constants in the [UserTransactionStatusUtil](./app/Utils/UserTransactionStatusUtil.php).
+    - **balanceMin**: Filtering the data according to the transaction balance with values >= filtered value.
+    - **balanceMax**: Filtering the data according to the transaction balance with values <= filtered value.
+    - **currency**: Filtering the data according to the transaction currency.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+   You can combine all filters or don't use any. ****Note**: The index function doesn't support pagination.
 
-## Contributing
+## What is Implemented
+- Docker Containers & Deployment (Application Container - Database Container)
+- Application Configuration
+- Database Design & Data [Migrations](./database/migrations)
+- Supervisor & Queue worker for managing background jobs
+- [Factories](./database/factories) & [Seeders](./database/seeders)
+- Clean Code
+  - Entities [Controllers](./app/Http/Controllers)
+  - Entities [Services](./app/Services)
+  - Entities [Models](./app/Models)
+  - Constant [Utility Classes](./app/Utils)
+- Unit & Feature [Tests](./tests)
+- Readme [File](./README.md)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Project Architecture
 
-## Code of Conduct
+The project is developed using **Abstract Factory Design Pattern**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+We have at first the:
+- **[BaseDataProvider](./app/DataProviders/BaseDataProvider.php)**: This class represents the base implementation of all data providers that should be implemented. It contains all the common variables and main functionalities that will be used be the children classes as well as the abstract methods that should be implemented by the children classes. 
+- **[DataProviderX](./app/DataProviders/DataProviderX.php)**: This is the class responsible for importing data for Provider X. It extends the [BaseDataProvider](./app/DataProviders/BaseDataProvider.php) and implements the abstract methods that configures the base to enable importing.
+- **[DataProviderY](./app/DataProviders/DataProviderY.php)**: Same as [DataProviderX](./app/DataProviders/DataProviderX.php) but with a different configuration for importing data for Provider Y.
 
-## Security Vulnerabilities
+Creating a new data provider is very simple. First, you will create a new DataProvider class which will extend the [BaseDataProvider](./app/DataProviders/BaseDataProvider.php). Then, you should implement the abstract methods which configures the base to enable importing.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+<b>**Note</b> Please don't forget to update the constants in the [DataProviderUtil](./app/Utils/DataProviderUtil.php). This class is being used in the validation and creation of data provider objects.
 
-## License
+Secondly, all business login is implemented in the [UserTransactionService](./app/Services/UserTransactionService.php). This class contains the methods responsible for importing the data and filtering the records as well.  
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+<b>**Note</b> The import process uses batches of size 50 record at a time which can be configured in the [.env](./.env) file.
+
+<b>**Note</b> The import process uses the [halaxa/json-machine](https://github.com/halaxa/json-machine) package which has proven to be very efficient in reading large JSON files.
