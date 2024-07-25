@@ -35,6 +35,29 @@ There are 2 main endpoints that can be used throughout this project:
     This endpoint takes 2 parameters in its body:
     - **provider**: Specifying the DataProvider class that should be used to import the data. It should take a string value from the constants in the [DataProviderUtil](./app/Utils/DataProviderUtil.php). 
     - **file**: The JSON file containing the data.
+    
+    The Data in the file is assumed to be an array of JSON objects. Example:
+```JSON
+[
+ {
+   "parentAmount": 200,
+   "Currency": "USD",
+   "parentEmail": "parent1@parent.eu",
+   "statusCode": 1,
+   "registerationDate": "2018-11-30",
+   "parentIdentification": "d3d29d70-1d25-11e3-8591-034165a3a613"
+ },
+ {
+   "parentAmount": 300,
+   "Currency": "USD",
+   "parentEmail": "parent2@parent.eu",
+   "statusCode": 1,
+   "registerationDate": "2018-11-30",
+   "parentIdentification": "d3d29d70-1d25-11e3-8591-034165a3a614"
+ },
+ ...
+]
+```
 
 2. **Transactions Index**: 
 
