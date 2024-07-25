@@ -22,7 +22,7 @@ class UserTransactionService
      * @param array $filters
      * @return array
      */
-    public function list(array $filters)
+    public function list(array $filters = [])
     {
         $query = UserTransaction::query();
 
@@ -61,7 +61,18 @@ class UserTransactionService
      */
     public function importFromUploadedFile(UploadedFile $file, string $provider)
     {
-        $items = Items::fromString($file->getContent());
+        $this->importFromJsonString($file->getContent(), $provider);
+    }
+
+    /**
+     * @param string $jsonString
+     * @param string $provider
+     * @throws InvalidArgumentException
+     * @throws \Exception
+     */
+    public function importFromJsonString(string $jsonString, string $provider)
+    {
+        $items = Items::fromString($jsonString);
         $this->import($items, $provider);
     }
 
